@@ -30,4 +30,7 @@ def main():
     convert_video_to_audio(VIDEO)
     chunk_audio(MP3_FILENAME)
 
+def handler(event, context):
+	convert_video_to_audio(ffmpeg.input(event['video_file']))
+
 if __name__ == "__main__": main()
