@@ -1,39 +1,36 @@
-import argparse
-import pdb
+#!/usr/bin/env python3
+import sys
 import ffmpeg
+
 from pydub import AudioSegment
 
-PARSER = argparse.ArgumentParser(description='Convert Video to Audio using ffmpeg API')
-PARSER.add_argument('--i', metavar='i', type=str, nargs=1)
-ARGS = PARSER.parse_args()
-VIDEO_FILE_PATH = ARGS.i[0]
-VIDEO = ffmpeg.input(VIDEO_FILE_PATH)
-MP3_FILENAME = VIDEO_FILE_PATH + ".mp3"
 
-def convert_video_to_audio(video_file):
+CHUNK_SIZE = 15
+
+
+def get_audio():
     '''convert Video File to Audio'''
-    video_file.output(MP3_FILENAME).run()
+    video_file = ffmpeg.input(sys.argv[1])
+    mp3_file = '.'.join(sys.argv[1].split('.')[:-1] + ['mp3'])
+    video_file.output().run()
     return
 
-def chunk_audio(file):
+
+def chunk_audio(file_name):
     '''chunk audio file into 15 second segments'''
-    sound = AudioSegment.from_mp3(file)
-    pdb.set_trace()
-    
-    if sound.duration_seconds <= 15.0:
-        print "Audio file is less than or equal to 15 seconds in length"
-    else:
-        # split sound in 5-second slices and export
-        for i, chunk in enumerate(sound[::15000]):
-          with open("sound-%s.mp3" % i, "wb") as f:
-            chunk.export(f, format="mp3")
-        
+    sound = AudioSegment.from_mp3(file_name)
+    for i in range((sound.duration_seconds+1)//CHUNK_SIZE):
+        with open('sound-{}.mp3'.format(i), 'wb') as f:
+            sound.export(f, format='mp3')
+
 
 def main():
     convert_video_to_audio(VIDEO)
     chunk_audio(MP3_FILENAME)
 
+
 def handler(event, context):
 	convert_video_to_audio(ffmpeg.input(event['video_file']))
+
 
 if __name__ == "__main__": main()
