@@ -6,14 +6,14 @@ from pydub import AudioSegment
 
 
 CHUNK_SIZE = 15
+DEFAULT_VIDEO = ffmpeg.input(sys.argv[1])
 
 
-def get_audio():
+def get_audio(video_file=DEFAULT_VIDEO):
     '''convert Video File to Audio'''
-    video_file = ffmpeg.input(sys.argv[1])
     mp3_file = '.'.join(sys.argv[1].split('.')[:-1] + ['mp3'])
     video_file.output().run()
-    return
+    return mp3_file
 
 
 def chunk_audio(file_name):
@@ -25,12 +25,13 @@ def chunk_audio(file_name):
 
 
 def main():
-    convert_video_to_audio(VIDEO)
-    chunk_audio(MP3_FILENAME)
+    mp3_file = get_audio()
+    chunk_audio(mp3_file)
 
 
 def handler(event, context):
-	convert_video_to_audio(ffmpeg.input(event['video_file']))
+    convert_video_to_audio(ffmpeg.input(event['video_file']))
 
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()
