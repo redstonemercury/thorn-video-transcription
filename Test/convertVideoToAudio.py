@@ -1,4 +1,5 @@
 import argparse
+import pdb
 import ffmpeg
 from pydub import AudioSegment
 
@@ -17,6 +18,8 @@ def convert_video_to_audio(video_file):
 def chunk_audio(file):
     '''chunk audio file into 15 second segments'''
     sound = AudioSegment.from_mp3(file)
+    pdb.set_trace()
+    
     if sound.duration_seconds <= 15.0:
         print "Audio file is less than or equal to 15 seconds in length"
     else:
