@@ -1,0 +1,6 @@
+{
+  "description": "Function to convert audio chunked audio files to text files.",
+  "hooks":{
+    "build": "pip install -r requirements.txt -t ."
+  }
+}
