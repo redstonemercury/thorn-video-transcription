@@ -8,7 +8,8 @@ from pydub import AudioSegment
 
 
 class Converter(object):
-    CHUNK_SIZE = 15000
+    BUFFER = 100
+    CHUNK_SIZE = 15000 - 2 * BUFFER
     DEFAULT_VIDEO = ffmpeg.input(sys.argv[1])
     REGION = 'us-east-1'
     PROFILE = 'hackathon'
@@ -50,6 +51,7 @@ class Converter(object):
     def file_chunk_name(orig, i):
         parts = orig.split('.')
         parts[-2] = '{}-{}'.format(parts[-2], i)
+        print('.'.join(parts))
         return '.'.join(parts)
 
     def chunk_audio(self, file_name):
@@ -57,7 +59,10 @@ class Converter(object):
         sound = AudioSegment.from_mp3(file_name)
         for i in range(int(sound.duration_seconds+1)//int(self.CHUNK_SIZE/1000)):
             chunk_stream = BytesIO()
-            chunk = sound[i*self.CHUNK_SIZE:(i+1)*self.CHUNK_SIZE].export(chunk_stream, format='mp3')
+            start = i*self.CHUNK_SIZE - self.BUFFER
+            start = max(start, 0)
+            end = (i+1)*self.CHUNK_SIZE + self.BUFFER
+            chunk = sound[start:end].export(chunk_stream, format='mp3')
             chunk_name = self.file_chunk_name(file_name, i)
             self.upload_to_s3(self.AUDIO_BUCKET_NAME, chunk_name, chunk)
 
