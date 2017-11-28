@@ -23,7 +23,7 @@ def upload_to_s3(input_file, write_file):
 
 
 def handle(event, context):
-    file_root = event['audio_file']
+    file_root = event['Records'][0]['s3']['object']['key']
     write_file = '/tmp/' + file_root + '.txt'
 
     output = convert_audio_to_text(file_root)
