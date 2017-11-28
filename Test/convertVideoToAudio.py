@@ -49,8 +49,7 @@ class Converter(object):
     @staticmethod
     def file_chunk_name(orig, i):
         parts = orig.split('.')
-        parts.insert(-1, str(i))
-        print('.'.join(parts))
+        parts[-2] = '{}-{}'.format(parts[-2], i)
         return '.'.join(parts)
 
     def chunk_audio(self, file_name):
