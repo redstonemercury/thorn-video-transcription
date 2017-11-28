@@ -1,0 +1,6 @@
+{
+  "description": "Function to create s3 buckets",
+  "hooks":{
+    "build": "pip install -r requirements.txt -t ."
+  }
+}
