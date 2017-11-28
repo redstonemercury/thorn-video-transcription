@@ -105,7 +105,6 @@ class Converter(object):
             video_file.output(chunk_name, acodec='pcm_s16le', ar=16000, ac=1, ss=self.convert_to_time(i), to=self.convert_to_time(i+1)).run()
             with open(chunk_name, 'rb') as f:
                 self.upload_to_s3(self.AUDIO_BUCKET_NAME, chunk_name, content=f.read())
-        print('UPLOADING MANIFEST')
         self.upload_to_s3(self.AUDIO_BUCKET_NAME, self.file_manifest(file_name), content=str(chunk_count))
 
     def upload_video(self, file_name, content):
