@@ -10,8 +10,8 @@ from pydub import AudioSegment
 
 
 class Converter(object):
-    BUFFER = 100
-    CHUNK_SIZE = 15000 - 2 * BUFFER
+    BUFFER = 100  # TODO: re-implement this so you get 0:00-0:14.5 and then 0:14-0:29, or something like that
+    CHUNK_SIZE = 15000
     DEFAULT_VIDEO = ffmpeg.input(sys.argv[1])
     REGION = 'us-east-1'
     PROFILE = 'hackathon'
@@ -58,13 +58,15 @@ class Converter(object):
         return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
 
     def get_audio(self, video_file=DEFAULT_VIDEO):
-        '''convert Video File to Audio'''
+        """convert Video File to Audio"""
+        # TODO: we fought with ffmpeg and pydub to try to skip this, but weren't able to.
+        #       Given more time this should just chunk the file in one step
         audio_file = '.'.join(sys.argv[1].split('.')[:-1] + ['wav'])
         video_file.output(audio_file).run()
         return audio_file
 
     # def get_audio(self, video_file=DEFAULT_VIDEO):
-    #     '''convert Video File to Audio'''
+    #     """convert Video File to Audio"""
     #     audio_file = '.'.join(sys.argv[1].split('.')[:-1] + ['wav'])
     #     i = 0
     #     while True:
@@ -86,7 +88,7 @@ class Converter(object):
 
     @classmethod
     def file_manifest(cls, orig):
-        return cls.file_chunk_name(orig, 'MANIFEST').rstrip('.wav')
+        return cls.file_chunk_name(orig, 'MANIFEST')[:-4]
 
     @staticmethod
     def file_chunk_name(orig, i):
@@ -96,7 +98,7 @@ class Converter(object):
         return '.'.join(parts)
 
     def chunk_audio(self, file_name):
-        '''chunk audio file into 15 second segments'''
+        """chunk audio file into 15 second segments"""
         # TODO: clean this up a bit -- offsets and whatnot
         sound = AudioSegment.from_wav(file_name)  # need this JUST FOR THE duration_seconds  UGGGG
         video_file = ffmpeg.input(file_name, format='wav')
@@ -109,6 +111,7 @@ class Converter(object):
         self.upload_to_s3(self.AUDIO_BUCKET_NAME, self.file_manifest(file_name), content=str(chunk_count))
 
     def upload_video(self, file_name, content):
+        # TODO: should probably just uses hashes (sha256 + sha1 would be quite future-proof), but we'll need a place to store an associated original file name
         new_name = '{}-{}'.format(int(time.time() * 1000), file_name)
         self.upload_to_s3(self.VIDEO_BUCKET_NAME, new_name, content=content)
 
@@ -119,5 +122,5 @@ def main():
     c.chunk_audio(file_name)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
