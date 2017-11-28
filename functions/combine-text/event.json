@@ -1,0 +1,14 @@
+{
+    "Records": [
+        {
+            "s3": {
+                "bucket": {
+                    "name": "sonicthorn-text"
+                },
+                "object": {
+                    "key": "234567-someaudiofile-done.txt"
+                }
+            }
+        }
+    ]
+}
