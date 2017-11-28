@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 import boto3
 import ffmpeg
 from io import BytesIO
@@ -108,18 +109,14 @@ class Converter(object):
         self.upload_to_s3(self.AUDIO_BUCKET_NAME, self.file_manifest(file_name), content=str(chunk_count))
 
     def upload_video(self, file_name, content):
-        self.upload_to_s3(self.VIDEO_BUCKET_NAME, file_name, content=content)
+        new_name = '{}-{}'.format(int(time.time() * 1000), file_name)
+        self.upload_to_s3(self.VIDEO_BUCKET_NAME, new_name, content=content)
 
 
 def main():
     c = Converter()
     file_name = c.get_audio()
     c.chunk_audio(file_name)
-
-
-
-def handler(event, context):
-    convert_video_to_audio(ffmpeg.input(event['video_file']))
 
 
 if __name__ == "__main__":
