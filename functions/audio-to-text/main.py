@@ -18,8 +18,8 @@ def write_text_file(output, output_file):
     output_file.close()
 
 
-def upload_to_s3(input_file):
-    s3.meta.client.upload_file(input_file, 'sonicthorn-text', input_file.txt)
+def upload_to_s3(input_file, write_file):
+    s3.Object('sonicthorn-text', input_file).upload_file(write_file)
 
 
 def handle(event, context):
@@ -27,9 +27,8 @@ def handle(event, context):
     write_file = '/tmp/' + file_root + '.txt'
 
     output = convert_audio_to_text(file_root)
-    print(output)
 
     write_text_file(output, write_file)
 
-    s3.Object('sonicthorn-text', file_root + '.txt').upload_file(write_file)
+    upload_to_s3(file_root + '.txt', write_file)
 
