@@ -1,0 +1,6 @@
+{
+  "description": "Function to chunk an audio file into 15 second chunks.",
+  "hooks":{
+    "build": "pip install -r requirements.txt -t ."
+  }
+}

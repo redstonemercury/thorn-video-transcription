@@ -1,0 +1,6 @@
+{
+  "description": "Function to convert video file stored in S3 to an audio file and save it in S3.",
+  "hooks":{
+    "build": "pip install -r requirements.txt -t ."
+  }
+}

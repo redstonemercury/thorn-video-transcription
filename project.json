@@ -1,0 +1,6 @@
+{
+  "name": "sonicthorn",
+  "description": "Function to convert a video file stored in S3 to an audio file and save.",
+  "role": "arn:aws:iam::808536260015:role/service-role/sonicthorn",
+  "runtime": "python3.6"
+}
